@@ -38,10 +38,24 @@ public class ContactProblem implements IContactProblem {
 	public void run() {
 		List<String> it;
 		String aux;
+		
+		/*
+		 * i representa la longitud que tendra el patron en esa iteracion.
+		 */
+
 		for(int i = minLength; i <= maxLength; i++){
 			aux = this.message;
 			
+			
+			/*
+			 * Divido el mensaje en tantas partes como diga en la variable i.
+			 * En la primera iteracion desde la posicion 0 y en la segunda iteracion desde la posicion 1,
+			 * asi podre representar todos los patrones posibles con la longitud i.
+			 * 
+			*/
+			
 			for(int j = 0; j < 2; j++){
+				//Utilizando la clase Splitter de la api de guava obtengo una lista con cadenas de tamanho i
 				it = Lists.newArrayList(Splitter.fixedLength(i).split(aux.subSequence(j, aux.length())));
 				addToMap(Collections2.filter(it, new PredicateLenthEqual(i)));
 				if(i == aux.length())
@@ -53,12 +67,20 @@ public class ContactProblem implements IContactProblem {
 		executed = true;
 	}
 	
+	
+	
+	/*
+	 * En cada iteracion del bucle while:
+	 * 		Creo una lista lPatron que tendra solo las cadenas que sean iguales al primer elemento del iterable que se le pasa por parametros.
+	 * 		Anhado en el map este elemento como clave y el tamanho de la lista.
+	 * 		Por ultimo elimino del iterable todos los elementos que hay en la lista lPatron
+	 */
 	public void addToMap(Iterable<String> it){
 		List<String> l = Lists.newArrayList(it);
 		do{
 			List<String> lPatron = Lists.newArrayList(it);
-			lPatron = Lists.newArrayList(Collections2.filter(lPatron, new PredicatePatronEqual(l.get(0))));
 			String key = l.get(0);
+			lPatron = Lists.newArrayList(Collections2.filter(lPatron, new PredicatePatronEqual(key)));
 			if(map.containsKey(key)){
 				map.put(key, map.get(key) + lPatron.size());
 			}else{
@@ -78,6 +100,7 @@ public class ContactProblem implements IContactProblem {
 		
 		Map<String, Integer> map = Maps.newHashMap(this.map);
 		Map<String, Integer> res = Maps.newHashMap();
+		//Obtener una lista con todos los valores ordenados de mayor a menor (Clase Ordering de la api de guava)
 		List<Integer> l = Lists.newArrayList(Ordering.natural().reverse().sortedCopy(map.values())); 
 		Integer i = 1;
 		do{
